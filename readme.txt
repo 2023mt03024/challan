@@ -236,6 +236,12 @@ kubectl apply -f postgres/deployment.yaml
 # Deploy kafka
 kubectl apply -f kafka/deployment.yaml
 
+# Get pods
+kubectl get pods
+
+# Create a kafka topic Challan
+kubectl exec -it <kafka-pod> -- /opt/bitnami/kafka/bin/kafka-topics.sh --create --bootstrap-server kafka:9092 --topic Challan --partitions 1 --replication-factor 1
+
 # Deploy dynamodb
 kubectl apply -f dynamodb/deployment.yaml
 
