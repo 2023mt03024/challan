@@ -295,3 +295,75 @@ kubectl delete -f postgres/deployment.yaml
 
 REM Stop minikube cluster
 minikube stop
+
+REM create EKS cluster
+eksctl create cluster --region=us-east-1 --zones=us-east-1a,us-east-1b  --name my-cluster --fargate
+
+REM Check access to the cluster
+kubectl get svc
+
+REM Deploy postgres
+kubectl apply -f postgres/deployment.yaml
+
+REM Deploy kafka
+kubectl apply -f kafka/deployment.yaml
+
+REM Get pods
+kubectl get pods
+
+REM Create a kafka topic Challan
+kubectl exec -it <kafka-pod> -- /opt/bitnami/kafka/bin/kafka-topics.sh --create --bootstrap-server kafka:9092 --topic Challan --partitions 1 --replication-factor 1
+
+REM Deploy dynamodb
+kubectl apply -f dynamodb/deployment.yaml
+
+REM Deploy vehicle
+kubectl apply -f vehicle/deployment.yaml
+
+REM Deploy challan_as
+kubectl apply -f challan_as/deployment.yaml
+
+REM Deploy challan_ws
+kubectl apply -f challan_ws/deployment.yaml
+
+REM Deploy challan_ws_public
+kubectl apply -f challan_ws_public/deployment.yaml
+
+REM Get pods
+kubectl get pods
+
+REM Expose the traffic from local host to challan-ws pod
+kubectl port-forward  <challan-ws-deployment pod>  8003:8003
+
+REM Expose the traffic from local host to challan-ws-public pod
+kubectl port-forward  <challan-ws-public-deployment>  8004:8004
+
+REM Test the application
+
+REM Stop port-forward to challan-ws-public
+
+REM Stop port-forward to challan-ws
+
+REM Delete challan_ws_public deployment and service
+kubectl delete -f challan_ws_public/deployment.yaml
+
+REM Delete challan_ws deployment and service
+kubectl delete -f challan_ws/deployment.yaml
+
+REM Delete challan_as deployment and service
+kubectl delete -f challan_as/deployment.yaml
+
+REM Delete vehicle deployment and service
+kubectl delete -f vehicle/deployment.yaml
+
+REM Delete dynamodb deployment and service
+kubectl delete -f dynamodb/deployment.yaml
+
+REM Delete kafka deployment and service
+kubectl delete -f kafka/deployment.yaml
+
+REM Delete postgres deployment and service
+kubectl delete -f postgres/deployment.yaml
+
+REM Delete EKS cluster
+eksctl delete cluster --name my-cluster

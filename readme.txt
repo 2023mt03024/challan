@@ -295,3 +295,75 @@ kubectl delete -f postgres/deployment.yaml
 
 # Stop minikube cluster
 minikube stop
+
+# create EKS cluster
+eksctl create cluster --region=us-east-1 --zones=us-east-1a,us-east-1b  --name my-cluster --fargate
+
+# Check access to the cluster
+kubectl get svc
+
+# Deploy postgres
+kubectl apply -f postgres/deployment.yaml
+
+# Deploy kafka
+kubectl apply -f kafka/deployment.yaml
+
+# Get pods
+kubectl get pods
+
+# Create a kafka topic Challan
+kubectl exec -it <kafka-pod> -- /opt/bitnami/kafka/bin/kafka-topics.sh --create --bootstrap-server kafka:9092 --topic Challan --partitions 1 --replication-factor 1
+
+# Deploy dynamodb
+kubectl apply -f dynamodb/deployment.yaml
+
+# Deploy vehicle
+kubectl apply -f vehicle/deployment.yaml
+
+# Deploy challan_as
+kubectl apply -f challan_as/deployment.yaml
+
+# Deploy challan_ws
+kubectl apply -f challan_ws/deployment.yaml
+
+# Deploy challan_ws_public
+kubectl apply -f challan_ws_public/deployment.yaml
+
+# Get pods
+kubectl get pods
+
+# Expose the traffic from local host to challan-ws pod
+kubectl port-forward  <challan-ws-deployment pod>  8003:8003
+
+# Expose the traffic from local host to challan-ws-public pod
+kubectl port-forward  <challan-ws-public-deployment>  8004:8004
+
+# Test the application
+
+# Stop port-forward to challan-ws-public
+
+# Stop port-forward to challan-ws
+
+# Delete challan_ws_public deployment and service
+kubectl delete -f challan_ws_public/deployment.yaml
+
+# Delete challan_ws deployment and service
+kubectl delete -f challan_ws/deployment.yaml
+
+# Delete challan_as deployment and service
+kubectl delete -f challan_as/deployment.yaml
+
+# Delete vehicle deployment and service
+kubectl delete -f vehicle/deployment.yaml
+
+# Delete dynamodb deployment and service
+kubectl delete -f dynamodb/deployment.yaml
+
+# Delete kafka deployment and service
+kubectl delete -f kafka/deployment.yaml
+
+# Delete postgres deployment and service
+kubectl delete -f postgres/deployment.yaml
+
+# Delete EKS cluster
+eksctl delete cluster --name my-cluster
