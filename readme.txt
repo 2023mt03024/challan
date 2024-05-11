@@ -296,11 +296,15 @@ kubectl delete -f postgres/deployment.yaml
 # Stop minikube cluster
 minikube stop
 
+### Create a kubernetes cluster on cloud ###
+
 # create EKS cluster
 eksctl create cluster --region=us-east-1 --zones=us-east-1a,us-east-1b  --name my-cluster --fargate
 
 # Check access to the cluster
 kubectl get svc
+
+### Deployment of your application on minikube cluster ###
 
 # Deploy postgres
 kubectl apply -f postgres/deployment.yaml
